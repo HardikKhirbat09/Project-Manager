@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { json } from 'express';
 import cors from 'cors';
 import { connectDB } from './db/index.js';
 
@@ -21,6 +21,12 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+
+import healthCheckRoutes from './routes/healthcheck.routes.js';
+app.use('/api/v1/healthcheck', healthCheckRoutes);
+
+
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {
