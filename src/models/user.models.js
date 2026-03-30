@@ -74,7 +74,7 @@ userSchema.methods.generateAccessToken = function(){
     return jwt.sign({userId : this._id,
          email : this.email, 
          username : this.username}, 
-         process.env.ACCESS_TOKEN_SECRET, // like a password to prevent tampering of the token
+         process.env.ACCESS_TOKEN_SECRET, // like a password to prevent tampering of the token and check if token belongs to server
          {expiresIn : process.env.ACCESS_TOKEN_EXPIRY});
 }
 
