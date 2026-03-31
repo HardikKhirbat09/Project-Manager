@@ -25,7 +25,8 @@ app.use(cors({
 
 import healthCheckRoutes from './routes/healthcheck.routes.js';
 app.use('/api/v1/healthcheck', healthCheckRoutes);
-
+import authRoutes from './routes/auth.routes.js';
+app.use('/api/v1/auth', authRoutes);
 
 const PORT = process.env.PORT || 3000;
 
