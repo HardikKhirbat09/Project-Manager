@@ -16,6 +16,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
             throw new apiError(401, 'Unauthorized, user not found');
         }
         req.user = user; // to make user data available in next middlewares and controllers
+        next();
     }
     catch(error){
         throw new apiError(401, 'Unauthorized, invalid token');
