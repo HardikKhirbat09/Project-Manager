@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express, { json } from 'express';
 import cors from 'cors';
 import { connectDB } from './db/index.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config({
     path: './.env',
@@ -14,6 +15,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+
+app.use(cookieParser());
 //cors configuration
 app.use(cors({
     origin: process.env.CORS_ORIGIN?.split(",") || '*',

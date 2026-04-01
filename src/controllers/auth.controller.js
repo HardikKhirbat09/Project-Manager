@@ -35,7 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
         username,
         email,
         password,
-        inEmailVerified : false,
+        isEmailVerified : false,
     });
     
     const {unhashedToken, hashedToken, tokenExpiry} = user.generateTemporaryToken();
@@ -63,4 +63,39 @@ const registerUser = asyncHandler(async (req, res) => {
     return res.status(201).json(new apiResponse(201, registeredUser, 'User registered successfully'));
 });
 
-export { registerUser, generaeAccessAndRefreshToken };
+const login = asyncHandler(async (req, res) => {
+    const {email, password, username} = req.body;
+    if(!email){
+        throw new apiError(400, 'Email is required');
+    }
+
+    const user = await User.findOne({email});
+    if(!user){
+        throw new apiError(404, 'User not found');
+    }
+    const isPassValid = await user.comparePassword(password);
+    if(!isPassValid){
+        throw new apiError(401, 'Invalid credentials');
+    }
+
+    const {accessToken, refreshToken} = await generaeAccessAndRefreshToken(user._id);
+
+    const loggedInUser = await User.findById(user._id).select(
+        "-password -refreshToken -emailVerificationToken -emailVerificationTokenExpiry",
+    )
+    const options = {
+        httpOnly : true,
+        secure : true
+    }
+
+    return res.status(200)
+    .cookie('accessToken', accessToken, options)
+    .cookie('refreshToken', refreshToken, options)
+    .json(new apiResponse(200, {
+        user : loggedInUser,
+        accessToken,
+        refreshToken,
+    }, 'User logged in successfully'));
+    
+});
+export { registerUser, generaeAccessAndRefreshToken, login };
