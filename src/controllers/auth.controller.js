@@ -3,6 +3,7 @@ import {apiResponse} from '../utils/apiResponse.js';
 import {asyncHandler} from '../utils/async-handler.js';
 import{apiError} from '../utils/apiError.js';
 import {sendEmail , emailVerificationTemplate} from '../utils/mails.js';
+import jwt from 'jsonwebtoken';
 //get data 
 //check if user exist
 //save user to db if not exist
@@ -173,5 +174,37 @@ const resendEmailVerification = asyncHandler(async (res, res) => {
 
 });
 
+const refreshAccessToken = asyncHandler(async (req, res) => {
+    const refreshToken = req.cookies?.refreshToken || req.header("Authorisation")?.replace("Bearer ", "");
+    if(!refreshToken){
+        throw new apiError(401, 'Unauthorized, token not found'); // 401 is for unauthorized
+    }
+    try{
+       const decoder = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+       const user = await User.findById(decoder.userId);
 
+       if(!user || user.refreshToken !== refreshToken){
+        throw new apiError(401, 'Unauthorized, invalid token');
+       }
+
+       const options = {
+        httpOnly : true,
+        secure : true,
+        }
+        const {accessToken, refreshToken : newRefreshToken} = await generaeAccessAndRefreshToken(user._id);
+        user.refreshToken = newRefreshToken;
+        await user.save();
+        return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", newRefreshToken, options)
+        .json(
+            200, {accessToken, refreshToken : newRefreshToken},
+            "Access Token refreshed"
+        );
+    }
+    catch(error){
+        throw new apiError(401, 'Unauthorized, invalid token');
+    }
+});
 export { registerUser, generaeAccessAndRefreshToken, login, logoutUser, getCurrUser, verifyEmail };
