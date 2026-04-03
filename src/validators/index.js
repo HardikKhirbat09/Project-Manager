@@ -39,4 +39,41 @@ const userLoginValidator = () => {
     ]
 }
 
-export {userRegistrationValidator, userLoginValidator};
+const userChangePasswordValidator = () => {
+    return [
+        body("currentPassword")
+        .trim()
+        .notEmpty()
+        .withMessage("Current password is required"),
+        body("newPassword")
+        .trim()
+        .notEmpty()
+        .withMessage("New password is required")
+        .isLength({min : 6})
+        .withMessage("New password must be at least 6 characters long")
+    ]
+}
+
+const userForgotPasswordValidator = () => {
+    return [
+        body("email")
+        .trim()
+        .notEmpty()
+        .withMessage("Email is required")
+        .isEmail()
+        .withMessage("Invalid email format")
+    ]
+}
+const userResetPasswordValidator = () => {
+    return [
+        body("newPassword")
+        .trim()
+        .notEmpty()
+        .withMessage("New password is required")
+        .isLength({min : 6})
+        .withMessage("New password must be at least 6 characters long")
+    ]
+}
+
+export {userRegistrationValidator, userLoginValidator, 
+    userChangePasswordValidator, userForgotPasswordValidator, userResetPasswordValidator};

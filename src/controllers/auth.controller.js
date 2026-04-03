@@ -4,6 +4,7 @@ import {asyncHandler} from '../utils/async-handler.js';
 import{apiError} from '../utils/apiError.js';
 import {sendEmail , emailVerificationTemplate} from '../utils/mails.js';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 //get data 
 //check if user exist
 //save user to db if not exist
@@ -50,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
         subject : 'Email Verification',
         mailgenContent : emailVerificationTemplate(
             user.username,
-            `${req.protocol}://${req.host}/api/v1/users/verify-email/${unhashedToken}`,
+            `${req.protocol}://${req.host}/api/v1/auth/verify-email/${unhashedToken}`,
         )
     });
 
@@ -145,7 +146,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
     }, 'Email verified successfully'));
 });
 
-const resendEmailVerification = asyncHandler(async (res, res) => {
+const resendEmailVerification = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     if(!user){
         throw new apiError(404, 'User not found'); // 404 is for not found
@@ -166,7 +167,7 @@ const resendEmailVerification = asyncHandler(async (res, res) => {
         subject : 'Email Verification',
         mailgenContent : emailVerificationTemplate(
             user.username,
-            `${req.protocol}://${req.host}/api/v1/users/verify-email/${unhashedToken}`,
+            `${req.protocol}://${req.host}/api/v1/auth/verify-email/${unhashedToken}`,
         )
     });
 
@@ -220,13 +221,13 @@ const forgotPasswordReq = asyncHandler(async(req, res) => {
     user.forgotPasswordToken = hashedToken;
     user.forgotPasswordTokenExpiry = tokenExpiry;
     await user.save({validateBeforeSave : false});
-    
+    console.log(unhashedToken);
     await sendEmail({
         email : user.email,
         subject : 'Password Reset',
         mailgenContent : emailVerificationTemplate(
             user.username,
-            `${req.protocol}://${req.host}/api/v1/users/reset-password/${unhashedToken}`,
+            `${process.env.RESET_PASSWORD_URL}/${unhashedToken}`,
         )
     });
 
@@ -234,11 +235,11 @@ const forgotPasswordReq = asyncHandler(async(req, res) => {
 });
 
 const resetPassword = asyncHandler(async(req, res) => {
-    const {resetToken} = req.params;
+    const {token} = req.params;
     const {newPassword} = req.body;
     let hashedToken = crypto
     .createHash("sha256")
-    .update(resetToken)
+    .update(token)
     .digest("hex")
 
     const user = await User.findOne({
@@ -252,7 +253,7 @@ const resetPassword = asyncHandler(async(req, res) => {
     user.forgotPasswordTokenExpiry = undefined;
 
     user.password = newPassword;
-    await user.save(validateBeforeSave);
+    await user.save({validateBeforeSave: false});
 
     return res.status(200)
     .json(
@@ -262,7 +263,7 @@ const resetPassword = asyncHandler(async(req, res) => {
     );
 });
 
-const changePassword = asyncHandler(async(res, req) => {
+const changePassword = asyncHandler(async(req, res) => {
     const {currentPassword, newPassword} = req.body;
     const user = await User.findById(req.user._id);
     if(!user){
