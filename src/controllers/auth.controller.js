@@ -24,7 +24,7 @@ const generaeAccessAndRefreshToken = async (userId) => {
 
 
 const registerUser = asyncHandler(async (req, res) => {
-    const {username, email, password, role} = req.body;
+    const {username, email, password, role} = req.body; // variable names should be same as the keys in request body
     const existingUser = await User.findOne({
         $or : [{username}, {email}]
     })
@@ -117,4 +117,61 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new apiResponse(200, null, 'User logged out successfully'));
 });
 
-export { registerUser, generaeAccessAndRefreshToken, login, logoutUser };
+const getCurrUser = asyncHandler(async (req, res) => {
+    return res.status(200).json(new apiResponse(200, req.user, 'Current user fetched successfully'));
+});
+
+const verifyEmail = asyncHandler(async (req, res) => {
+    const {token} = req.params;
+    if(!token){
+        throw new apiError(400, 'Token is required'); // status code 400 is for bad request
+    }
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const user = await User.findOneAndUpdate({
+        emailVerificationToken : hashedToken,
+        emailVerificationTokenExpiry : {$gt : Date.now()},
+    });
+    if(!user){
+        throw new apiError(400, 'Invalid or expired token');
+    }
+    user.emailVerificationToken = undefined;
+    user.emailVerificationTokenExpiry = undefined;
+    user.isEmailVerified = true;
+    await user.save({validateBeforeSave : false});
+
+    return res.status(200).json(new apiResponse(200, {
+        isEmailVerified : user.isEmailVerified,
+    }, 'Email verified successfully'));
+});
+
+const resendEmailVerification = asyncHandler(async (res, res) => {
+    const user = await User.findById(req.user._id);
+    if(!user){
+        throw new apiError(404, 'User not found'); // 404 is for not found
+    }
+
+    if(user.isEmailVerified) {
+        throw new apiError(409, 'Email is already verified'); // 409 is for conflict
+    }
+
+    const {unhashedToken, hashedToken, tokenExpiry} = user.generateTemporaryToken();
+
+    user.emailVerificationToken = hashedToken;
+    user.emailVerificationTokenExpiry = tokenExpiry;
+    await user.save({validateBeforeSave : false});
+
+    await sendEmail({
+        email : user.email,
+        subject : 'Email Verification',
+        mailgenContent : emailVerificationTemplate(
+            user.username,
+            `${req.protocol}://${req.host}/api/v1/users/verify-email/${unhashedToken}`,
+        )
+    });
+
+    return res.status(200).json(new apiResponse(200, null, 'Verification email resent successfully'));
+
+});
+
+
+export { registerUser, generaeAccessAndRefreshToken, login, logoutUser, getCurrUser, verifyEmail };
