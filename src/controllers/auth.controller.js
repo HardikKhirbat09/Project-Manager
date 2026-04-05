@@ -2,7 +2,7 @@ import {User} from '../models/user.models.js';
 import {apiResponse} from '../utils/apiResponse.js';
 import {asyncHandler} from '../utils/async-handler.js';
 import{apiError} from '../utils/apiError.js';
-import {sendEmail , emailVerificationTemplate} from '../utils/mails.js';
+import {sendEmail , emailVerificationTemplate, ForgotPasswordTemplate} from '../utils/mails.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 //get data 
@@ -10,7 +10,7 @@ import crypto from 'crypto';
 //save user to db if not exist
 
 
-const generaeAccessAndRefreshToken = async (userId) => {
+const generateAccessAndRefreshToken = async (userId) => {
     try{
         const user = await User.findById(userId);
         const accessToken = user.generateAccessToken();
@@ -80,7 +80,7 @@ const login = asyncHandler(async (req, res) => {
         throw new apiError(401, 'Invalid credentials');
     }
 
-    const {accessToken, refreshToken} = await generaeAccessAndRefreshToken(user._id);
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
 
     const loggedInUser = await User.findById(user._id).select(
         "-password -refreshToken -emailVerificationToken -emailVerificationTokenExpiry",
@@ -192,7 +192,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         httpOnly : true,
         secure : true,
         }
-        const {accessToken, refreshToken : newRefreshToken} = await generaeAccessAndRefreshToken(user._id);
+        const {accessToken, refreshToken : newRefreshToken} = await generateAccessAndRefreshToken(user._id);
         user.refreshToken = newRefreshToken;
         await user.save();
         return res
@@ -221,7 +221,7 @@ const forgotPasswordReq = asyncHandler(async(req, res) => {
     user.forgotPasswordToken = hashedToken;
     user.forgotPasswordTokenExpiry = tokenExpiry;
     await user.save({validateBeforeSave : false});
-    console.log(unhashedToken);
+    // console.log(unhashedToken);
     await sendEmail({
         email : user.email,
         subject : 'Password Reset',
@@ -279,6 +279,6 @@ const changePassword = asyncHandler(async(req, res) => {
     return res.status(200).json(new apiResponse(200, null, 'Password changed successfully'));
 });
 
-export { registerUser, generaeAccessAndRefreshToken, login, logoutUser, getCurrUser, verifyEmail 
+export { registerUser, generateAccessAndRefreshToken, login, logoutUser, getCurrUser, verifyEmail 
 , resendEmailVerification, refreshAccessToken, forgotPasswordReq, resetPassword, changePassword
 };
