@@ -129,7 +129,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
         throw new apiError(400, 'Token is required'); // status code 400 is for bad request
     }
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    const user = await User.findOneAndUpdate({
+    const user = await User.findOne({
         emailVerificationToken : hashedToken,
         emailVerificationTokenExpiry : {$gt : Date.now()},
     });

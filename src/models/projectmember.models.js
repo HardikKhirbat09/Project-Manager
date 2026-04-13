@@ -19,5 +19,5 @@ const projectMemberSchema = new Schema({
     }
 }, {timestamps : true});
 
-export const ProjectMember = mongoose.model('ProjectMember', projectMemberSchema);
+export const ProjectMembers = mongoose.model('ProjectMember', projectMemberSchema);
     
