@@ -31,6 +31,9 @@ app.use('/api/v1/healthcheck', healthCheckRoutes);
 import authRoutes from './routes/auth.routes.js';
 app.use('/api/v1/auth', authRoutes);
 
+import projectRoutes from './routes/project.routes.js';
+app.use('/api/v1/projects', projectRoutes);
+
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {

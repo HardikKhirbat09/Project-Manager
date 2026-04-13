@@ -2,6 +2,8 @@ import { User } from "../models/user.models.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { apiError } from "../utils/apiError.js"; 
 import jwt from 'jsonwebtoken';
+import { AvailableUserRole } from "../utils/constants.js";
+import { ProjectMembers } from "../models/projectmember.models.js";
 
 export const verifyJWT = asyncHandler(async (req, res, next) => {
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
@@ -23,3 +25,29 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     }
 
 });
+
+export const ValidateProjectPemission = (roles = []) => {
+    asyncHandler(async (req, res, next) => {
+        const {projectId} = req.params;
+        if(!projectId){
+            throw new apiError(400, 'Project ID is required');
+        }
+
+        const projectMember = await ProjectMembers.findOne({
+            project : new mongoose.Types.ObjectId(projectId),
+            user : new mongoose.Types.ObjectId(req.user._id),
+        });
+
+        if(!projectMember){
+            throw new apiError(403, 'Forbidden, you are not a member of this project');
+        }
+
+        const givenRole = projectMember?.role;
+        req.user.role = givenRole; // to make user role available in next middlewares and controllers
+
+        if(!roles.includes(givenRole)){
+            throw new apiError(403, 'Forbidden, you do not have permission to perform this action');
+        }
+        next();
+    });
+};
