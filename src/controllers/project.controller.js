@@ -7,7 +7,7 @@ import{apiError} from '../utils/apiError.js';
 import {ProjectMembers} from '../models/projectmember.models.js';
 import {Projects} from '../models/project.models.js';
 import mongoose from 'mongoose';
-import { AvailableUserRole } from '../utils/constants.js';
+import { AvailableUserRole, UserRolesEnum } from '../utils/constants.js';
 
 
 const getProjects = asyncHandler(async (req, res) => {

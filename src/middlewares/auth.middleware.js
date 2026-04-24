@@ -2,7 +2,7 @@ import { User } from "../models/user.models.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { apiError } from "../utils/apiError.js"; 
 import jwt from 'jsonwebtoken';
-import { AvailableUserRole } from "../utils/constants.js";
+import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 import { ProjectMembers } from "../models/projectmember.models.js";
 
 export const verifyJWT = asyncHandler(async (req, res, next) => {
@@ -26,8 +26,8 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
 
 });
 
-export const ValidateProjectPemission = (roles = []) => {
-    asyncHandler(async (req, res, next) => {
+export const ValidateProjectPermission = (roles = []) => {
+    return asyncHandler(async (req, res, next) => {
         const {projectId} = req.params;
         if(!projectId){
             throw new apiError(400, 'Project ID is required');
