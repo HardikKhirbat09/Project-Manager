@@ -34,6 +34,8 @@ app.use('/api/v1/auth', authRoutes);
 import projectRoutes from './routes/project.routes.js';
 app.use('/api/v1/projects', projectRoutes);
 
+import taskRoutes from './routes/tasks.routes.js';
+app.use('/api/v1/tasks', taskRoutes);
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {

@@ -104,6 +104,87 @@ const addProjectMemberValidator = () => {
         .withMessage(`Role is invalid`)
     ];
 };
+
+const createTaskValidator = () => {
+    return [
+        body("title")
+        .trim()
+        .notEmpty()
+        .withMessage("Task title is required"),
+        body("description")
+        .trim()
+        .optional(),
+        body("status")
+        .trim()
+        .optional()
+        .isIn(["todo", "in-progress", "done"])
+        .withMessage("Invalid status value"),
+        body("assignedTo")
+        .trim()
+        .optional()
+        .isMongoId()
+        .withMessage("Invalid user ID for assignedTo field")
+    ];
+};
+
+const updateTaskValidator = () => {
+    return [
+        body("title")
+        .trim()
+        .optional()
+        .notEmpty()
+        .withMessage("Task title cannot be empty"),
+        body("description")
+        .trim()
+        .optional(),
+        body("status")
+        .trim()
+        .optional()
+        .isIn(["todo", "in-progress", "done"])
+        .withMessage("Invalid status value"),
+        body("assignedTo")
+        .trim()
+        .optional()
+        .isMongoId()
+        .withMessage("Invalid user ID for assignedTo field")
+    ];
+};
+
+const createSubtaskValidator = () => {
+    return [
+        body("title")
+        .trim()
+        .notEmpty()
+        .withMessage("Subtask title is required"),
+        body("description")
+        .trim()
+        .optional(),
+        body("status")
+        .trim()
+        .optional()
+        .isIn(["todo", "in-progress", "done"])
+        .withMessage("Invalid status value"),
+    ];
+};
+
+const updateSubtaskValidator = () => {
+    return [
+        body("title")
+        .trim()
+        .optional()
+        .notEmpty()
+        .withMessage("Subtask title cannot be empty"),
+        body("description")
+        .trim()
+        .optional(),
+        body("status")
+        .trim()
+        .optional()
+        .isBoolean()
+        .withMessage("Status must be a boolean value"),
+    ];
+};
 export {userRegistrationValidator, userLoginValidator, 
     userChangePasswordValidator, userForgotPasswordValidator, userResetPasswordValidator, 
-    createProjectValidator, addProjectMemberValidator};
+    createProjectValidator, addProjectMemberValidator, createTaskValidator, 
+    updateTaskValidator, createSubtaskValidator, updateSubtaskValidator};

@@ -103,7 +103,7 @@ const createProject = asyncHandler(async (req, res) => {
     const projectMember = await ProjectMembers.create({
         user : new mongoose.Types.ObjectId(req.user._id),
         project : new mongoose.Types.ObjectId(project._id),
-        role : userRolesEnum.ADMIN,
+        role : UserRolesEnum.ADMIN,
     });
 
     return res.status(201).json(new apiResponse(201, project, 'Project created successfully'));
