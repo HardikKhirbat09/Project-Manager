@@ -4,7 +4,7 @@ import {asyncHandler} from '../utils/async-handler.js';
 // const healthCheck = async (req, res, next) => {
 //     try{
 //         const user = await getUserFromDb();
-//         res.status(200).json(new apiResponse(200, null, 'Server is runnning fine'));
+//         res.status(200).json(new apiResponse(200, null, 'Server is running fine'));
 //     }
 //     catch(error){
 //         next(error);
@@ -13,6 +13,6 @@ import {asyncHandler} from '../utils/async-handler.js';
 
 const healthCheck = asyncHandler(async (req, res) => {
     // const user = await getUserFromDb();
-    res.status(200).json(new apiResponse(200, null, 'Server is runnning fine'));
+    res.status(200).json(new apiResponse(200, null, 'Server is running fine'));
 });
 export { healthCheck };
