@@ -1,11 +1,11 @@
 import {User} from '../models/user.models.js';
 import {apiResponse} from '../utils/apiResponse.js';
 import {asyncHandler} from '../utils/async-handler.js';
-import{apiError} from '../utils/apiError.js';
+import {apiError} from '../utils/apiError.js';
 import {Tasks} from '../models/tasks.models.js';
 import {Subtask} from '../models/subtasks.models.js';
 import {Projects} from '../models/project.models.js';
-import mongoose, { get } from 'mongoose';
+import mongoose from 'mongoose';
 import { AvailableUserRole } from '../utils/constants.js';
 
 const getTasks = asyncHandler(async (req, res) => {

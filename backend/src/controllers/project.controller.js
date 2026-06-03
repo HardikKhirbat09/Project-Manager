@@ -53,7 +53,7 @@ const getProjects = asyncHandler(async (req, res) => {
                     createdBy : 1,
                 },
                 role : 1,
-                id : 0
+                _id : 0
             }
         }
         
@@ -130,7 +130,7 @@ const addMembersToProject = asyncHandler(async (req, res) => {
         throw new apiError(404, 'User not found');
     }
 
-    await ProjectMembers.findByIdAndUpdate(
+    await ProjectMembers.findOneAndUpdate(
         {
             user : new mongoose.Types.ObjectId(user._id),
             project : new mongoose.Types.ObjectId(projectId),

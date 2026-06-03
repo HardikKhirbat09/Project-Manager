@@ -36,6 +36,10 @@ app.use('/api/v1/projects', projectRoutes);
 
 import taskRoutes from './routes/tasks.routes.js';
 app.use('/api/v1/tasks', taskRoutes);
+
+import notesRoutes from './routes/notes.routes.js';
+app.use('/api/v1/notes', notesRoutes);
+
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {

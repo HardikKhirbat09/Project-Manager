@@ -1,7 +1,7 @@
 import {User} from '../models/user.models.js';
 import {apiResponse} from '../utils/apiResponse.js';
 import {asyncHandler} from '../utils/async-handler.js';
-import{apiError} from '../utils/apiError.js';
+import {apiError} from '../utils/apiError.js';
 import {sendEmail , emailVerificationTemplate, ForgotPasswordTemplate} from '../utils/mails.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -141,9 +141,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
     user.isEmailVerified = true;
     await user.save({validateBeforeSave : false});
 
-    return res.status(200).json(new apiResponse(200, {
-        isEmailVerified : user.isEmailVerified,
-    }, 'Email verified successfully'));
+    return res.redirect(`${process.env.VERIFY_EMAIL_URL}?verified=true`); // Redirect to frontend with a query parameter indicating successful verification
 });
 
 const resendEmailVerification = asyncHandler(async (req, res) => {
@@ -167,7 +165,7 @@ const resendEmailVerification = asyncHandler(async (req, res) => {
         subject : 'Email Verification',
         mailgenContent : emailVerificationTemplate(
             user.username,
-            `${req.protocol}://${req.host}/api/v1/auth/verify-email/${unhashedToken}`,
+            `${req.protocol}://${req.get('host')}/api/v1/auth/verify-email/${unhashedToken}`,
         )
     });
 
@@ -176,7 +174,7 @@ const resendEmailVerification = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-    const refreshToken = req.cookies?.refreshToken || req.header("Authorisation")?.replace("Bearer ", "");
+    const refreshToken = req.cookies?.refreshToken || req.header("Authorization")?.replace("Bearer ", "");
     if(!refreshToken){
         throw new apiError(401, 'Unauthorized, token not found'); // 401 is for unauthorized
     }
@@ -199,10 +197,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         .status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", newRefreshToken, options)
-        .json(
+        .json(new apiResponse(
             200, {accessToken, refreshToken : newRefreshToken},
             "Access Token refreshed"
-        );
+        ));
     }
     catch(error){
         throw new apiError(401, 'Unauthorized, invalid token');
@@ -225,7 +223,7 @@ const forgotPasswordReq = asyncHandler(async(req, res) => {
     await sendEmail({
         email : user.email,
         subject : 'Password Reset',
-        mailgenContent : emailVerificationTemplate(
+        mailgenContent : ForgotPasswordTemplate(
             user.username,
             `${process.env.RESET_PASSWORD_URL}/${unhashedToken}`,
         )
@@ -247,7 +245,7 @@ const resetPassword = asyncHandler(async(req, res) => {
         forgotPasswordTokenExpiry : {$gt : Date.now()}
     })
     if(!user){
-        throw new apiError(489, "Token is invalid or expired")
+        throw new apiError(400, "Token is invalid or expired")
     }
     user.forgotPasswordToken = undefined;
     user.forgotPasswordTokenExpiry = undefined;

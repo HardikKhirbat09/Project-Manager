@@ -1,7 +1,8 @@
 import { User } from "../models/user.models.js";
 import { asyncHandler } from "../utils/async-handler.js";
-import { apiError } from "../utils/apiError.js"; 
+import { apiError } from "../utils/apiError.js";
 import jwt from 'jsonwebtoken';
+import mongoose, {get} from 'mongoose';
 import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 import { ProjectMembers } from "../models/projectmember.models.js";
 
@@ -12,7 +13,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     }
     try{
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        const user = await User.findById(decoded?.user._id)
+        const user = await User.findById(decoded?.userId)
         .select("-password -refreshToken -emailVerificationToken -emailVerificationTokenExpiry");
         if(!user){
             throw new apiError(401, 'Unauthorized, user not found');

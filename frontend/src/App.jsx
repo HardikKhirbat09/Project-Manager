@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
-import authService from './services/authService'
+import authService from './services/authService.js'
 import './App.css'
 
 function ProtectedRoute({ children }) {

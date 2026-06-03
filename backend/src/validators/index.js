@@ -184,7 +184,26 @@ const updateSubtaskValidator = () => {
         .withMessage("Status must be a boolean value"),
     ];
 };
+const createNoteValidator = () => {
+    return [
+        body("content")
+        .trim()
+        .notEmpty()
+        .withMessage("Note content is required"),
+    ];
+};
+
+const updateNoteValidator = () => {
+    return [
+        body("content")
+        .trim()
+        .optional()
+        .notEmpty()
+        .withMessage("Note content cannot be empty"),
+    ];
+};
+
 export {userRegistrationValidator, userLoginValidator, 
     userChangePasswordValidator, userForgotPasswordValidator, userResetPasswordValidator, 
     createProjectValidator, addProjectMemberValidator, createTaskValidator, 
-    updateTaskValidator, createSubtaskValidator, updateSubtaskValidator};
+    updateTaskValidator, createSubtaskValidator, updateSubtaskValidator, createNoteValidator, updateNoteValidator};
