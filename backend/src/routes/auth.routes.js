@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { upload } from '../middlewares/multer.middleware.js';
 import {registerUser, login, logoutUser, refreshAccessToken,
      verifyEmail,
     forgotPasswordReq, resetPassword, getCurrUser, changePassword, resendEmailVerification } from '../controllers/auth.controller.js';
@@ -10,7 +11,7 @@ import { verifyJWT } from '../middlewares/auth.middleware.js';
 const router = Router();
 
 //unsecured routes , ie routes that can be accessed without authentication
-router.route('/register').post(userRegistrationValidator(), validate, registerUser);
+router.route('/register').post(upload.single('avatar'), userRegistrationValidator(), validate, registerUser);
 router.route('/login').post(userLoginValidator(), validate, login);
 router.route('/verify-email/:token').get(verifyEmail);
 router.route('/refresh-token').post(refreshAccessToken);

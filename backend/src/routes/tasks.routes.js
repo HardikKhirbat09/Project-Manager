@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { upload } from '../middlewares/multer.middleware.js';
 import { getTasks, createTasks, getTasksById,
      updateTasks, deleteTasks, createSubtasks,
       updateSubtasks, deleteSubtasks } from '../controllers/tasks.controller.js';
@@ -15,6 +16,7 @@ router.route("/:projectId")
 .get(ValidateProjectPermission(AvailableUserRole), getTasks)
 .post(
     ValidateProjectPermission([UserRolesEnum.ADMIN]),
+    upload.single('avatar'),
     createTaskValidator(), validate, createTasks
 );
 
@@ -22,6 +24,7 @@ router.route("/:projectId/t/:taskId")
 .get(ValidateProjectPermission(AvailableUserRole), getTasksById)
 .put(
     ValidateProjectPermission([UserRolesEnum.ADMIN]),
+    upload.single('avatar'),
     updateTaskValidator(), validate, updateTasks
 )
 .delete(ValidateProjectPermission([UserRolesEnum.ADMIN]), deleteTasks);
