@@ -1,33 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
-import authService from './services/authService.js'
-import './App.css'
-
-function ProtectedRoute({ children }) {
-  return authService.isAuthenticated() ? children : <Navigate to="/login" />
-}
+import authService from './api/authService.js'
+import Register from './pages/Register'
+import  {AuthProvider, useAuth } from './context/authContext.jsx'
 
 function App() {
   return (
     <BrowserRouter>
+    <AuthProvider>
       <Routes>
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <div style={{ padding: '20px' }}>
-              <h1>Welcome to Project Manager</h1>
-              <p>Dashboard coming soon...</p>
-              <button onClick={() => {
-                authService.logout()
-                window.location.href = '/login'
-              }}>
-                Logout
-              </button>
-            </div>
-          </ProtectedRoute>
-        } />
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
+    </AuthProvider>
     </BrowserRouter>
   )
 }

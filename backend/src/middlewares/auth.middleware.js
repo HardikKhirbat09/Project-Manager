@@ -21,8 +21,11 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
         req.user = user; // to make user data available in next middlewares and controllers
         next();
     }
-    catch(error){
-        throw new apiError(401, 'Unauthorized, invalid token');
+    catch (error) {
+        throw new apiError(401, error?.name === 'TokenExpiredError'
+            ? 'Access token expired'
+            : 'Unauthorized, invalid token'
+        );
     }
 
 });

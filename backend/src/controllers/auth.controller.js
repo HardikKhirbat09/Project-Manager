@@ -87,7 +87,8 @@ const login = asyncHandler(async (req, res) => {
     )
     const options = {
         httpOnly : true,
-        secure : true
+        secure : process.env.NODE_ENV === 'production', // Set secure flag to true in production
+        sameSite : process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Set sameSite to 'none' in production for cross-site cookies
     }
 
     return res.status(200)
@@ -111,7 +112,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     });
     const options = {
         httpOnly : true,
-        secure : true,
+        secure : process.env.NODE_ENV === 'production',
+        sameSite : process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     }
     return res.status(200)
     .clearCookie('accessToken', options)
@@ -188,7 +190,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
        const options = {
         httpOnly : true,
-        secure : true,
+        secure : process.env.NODE_ENV === 'production',
+        sameSite : process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         }
         const {accessToken, refreshToken : newRefreshToken} = await generateAccessAndRefreshToken(user._id);
         user.refreshToken = newRefreshToken;
@@ -202,8 +205,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             "Access Token refreshed"
         ));
     }
-    catch(error){
-        throw new apiError(401, 'Unauthorized, invalid token');
+    catch (error) {
+        if (error.name === "TokenExpiredError") {
+            throw new apiError(401, "Refresh token expired");
+        }
+        throw new apiError(401, "Invalid refresh token");
     }
 });
 
