@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuth } from '../context/authContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -25,8 +26,7 @@ axiosInstance.interceptors.response.use(
 
                 return axiosInstance(originalRequest);
             } catch (err) {
-                window.location.href = '/login';
-                return Promise.reject(err); // Reject the error to prevent further processing
+                return Promise.reject(err);
             }
         }
 
