@@ -121,7 +121,7 @@ const createTaskValidator = () => {
         .withMessage("Invalid status value"),
         body("assignedTo")
         .trim()
-        .optional()
+        .optional({values : "falsy"})
         .isMongoId()
         .withMessage("Invalid user ID for assignedTo field")
     ];
@@ -140,7 +140,7 @@ const updateTaskValidator = () => {
         body("status")
         .trim()
         .optional()
-        .isIn(["todo", "in-progress", "done"])
+        .isIn(["todo", "in_progress", "done"])
         .withMessage("Invalid status value"),
         body("assignedTo")
         .trim()

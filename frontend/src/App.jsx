@@ -8,6 +8,11 @@ import ResetPassword from './pages/resetPassword.jsx'
 import VerifyEmail from './pages/verifyEmail.jsx'
 import DashboardLayout from './pages/dashboard.jsx'
 import ProjectListPage from './pages/projectsList.jsx'
+import ProjectCreatePage from './pages/projectCreate.jsx'
+import ProjectDetailPage from './pages/projectDetail.jsx'
+import ProjectEditPage from './pages/projectEdit.jsx'
+import UserProfilePage from './pages/userProfile.jsx'
+import ProjectMembersPage from './pages/projectMembers.jsx'
 function App() {
   return (
     <BrowserRouter>
@@ -21,6 +26,31 @@ function App() {
         <Route path="/projects" element={
           <DashboardLayout>
             <ProjectListPage />
+          </DashboardLayout>
+        } />
+        <Route path="/projects/create" element={
+          <DashboardLayout>
+            <ProjectCreatePage />
+          </DashboardLayout>
+        } />
+        <Route path="/projects/:projectId" element={
+          <DashboardLayout>
+            <ProjectDetailPage />
+          </DashboardLayout>
+        } />
+        <Route path="/projects/:projectId/edit" element={
+          <DashboardLayout>
+            <ProjectEditPage />
+          </DashboardLayout>
+        } />
+        <Route path="/profile" element={
+          <DashboardLayout>
+            <UserProfilePage />
+          </DashboardLayout>
+        } />
+        <Route path="/projects/:projectId/members" element={
+          <DashboardLayout>
+            <ProjectMembersPage />
           </DashboardLayout>
         } />
         <Route path="*" element={<Navigate to="/login" />} />

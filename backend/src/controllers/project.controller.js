@@ -44,16 +44,17 @@ const getProjects = asyncHandler(async (req, res) => {
             $unwind : '$projectDetails',
         },
         {
-            $project : {
-                project : {
-                    _id : 1,
-                    name : 1,
-                    description : 1,
-                    createdAt : 1,
-                    createdBy : 1,
+            $project: {
+                project: {
+                _id: '$projectDetails._id',
+                name: '$projectDetails.name',
+                description: '$projectDetails.description',
+                createdAt: '$projectDetails.createdAt',
+                createdBy: '$projectDetails.createdBy',
+                totalMembers: '$projectDetails.totalMembers'
                 },
-                role : 1,
-                _id : 0
+                role: 1,
+                _id: 0
             }
         }
         
@@ -173,6 +174,7 @@ const getProjectMembers = asyncHandler(async (req, res) => {
                             username : 1,
                             fullName : 1,
                             avatar : 1,
+                            email : 1,
                         }
                     }
                 ]

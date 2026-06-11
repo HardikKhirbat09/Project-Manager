@@ -29,7 +29,7 @@ get(ValidateProjectPermission(AvailableUserRole), getProjectMembers)
 
 router.route("/:projectId/members/:userId")
 .delete(ValidateProjectPermission([UserRolesEnum.ADMIN]), removeMemberFromProject)
-.put(addProjectMemberValidator(), validate, ValidateProjectPermission([UserRolesEnum.ADMIN]), updateProjectMemberRole);
+.put(ValidateProjectPermission([UserRolesEnum.ADMIN]), updateProjectMemberRole);
 
 
 export default router;

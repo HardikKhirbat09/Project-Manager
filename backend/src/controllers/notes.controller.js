@@ -19,7 +19,7 @@ const getNotes = asyncHandler(async (req, res) => {
 
     const notes = await ProjectNote.find({
         project : new mongoose.Types.ObjectId(projectId),
-    });
+    }).populate("createdBy", "avatar username fullName");
 
     return res.status(200).json(new apiResponse(200, notes, 'Notes fetched successfully'));
 });
@@ -101,19 +101,13 @@ const updateNote = asyncHandler(async (req, res) => {
     const {noteId} = req.params;
     const {content} = req.body;
 
-    const note = await ProjectNote.findbyIdandUpdate(
-        noteId,
-        {
-            content,
-        },
-        {
-            new : true,
-        }
-    );
-
+    const note = await ProjectNote.findById(noteId);
     if(!note){
         throw new apiError(404, 'Note not found');
     }
+
+    note.content = content;
+    await note.save();
 
     return res.status(200).json(new apiResponse(200, note, 'Note updated successfully'));
     
