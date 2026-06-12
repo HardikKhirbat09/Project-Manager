@@ -75,6 +75,7 @@ const getTasksById = asyncHandler(async (req, res) => {
                             username : 1,
                             fullName : 1,
                             avatar : 1,
+                            email : 1,
                         }
                     }
                 ]
@@ -196,14 +197,14 @@ const updateSubtasks = asyncHandler(async (req, res) => {
         throw new apiError(404, 'Subtask not found');
     }
 
-    const {title, description, status} = req.body;
+    const {title, description, isCompleted} = req.body;
 
     const subtaskUpdated = await Subtask.findByIdAndUpdate(
         subtaskId,
         {
             title,
             description,
-            status,
+            isCompleted,
         },
         {new : true, runValidators : true},
     );

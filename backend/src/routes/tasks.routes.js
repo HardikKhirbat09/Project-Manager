@@ -35,7 +35,7 @@ router.route("/:projectId/t/:taskId/subtasks")
     createSubtaskValidator(), validate, createSubtasks
 )
 
-router.route("/:projectId/st/:subTaskId")
+router.route("/:projectId/st/:subtaskId")
 .put(
     ValidateProjectPermission(AvailableUserRole),
     updateSubtaskValidator(), validate, updateSubtasks
