@@ -2,6 +2,7 @@ import mailgen from 'mailgen';
 import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
+    console.log("A. sendEmail started");
     const mailgenerator= new mailgen({
         theme : 'default',
         product : {
@@ -12,7 +13,7 @@ const sendEmail = async (options) => {
 
     const emailTextual = mailgenerator.generatePlaintext(options.mailgenContent);
     const emailHTML = mailgenerator.generate(options.mailgenContent);
-    
+    console.log("B. Creating transporter");
     const transporter = nodemailer.createTransport({
         host : process.env.SMTP_HOST,
         port : process.env.SMTP_PORT,
@@ -21,7 +22,7 @@ const sendEmail = async (options) => {
             pass : process.env.SMTP_PASS,
         }
     })
-
+    console.log("C. Calling sendMail()");
     const mail = {
         from : `"Project Manager" <${process.env.SMTP_USER}>`,
         to : options.email,
@@ -35,7 +36,8 @@ const sendEmail = async (options) => {
         console.log('Email sent successfully'); 
     }
     catch(error){
-        console.error('Error sending email:', error);   
+        console.error('Error sending email:', error);
+        throw error;   
     }
 }
 
