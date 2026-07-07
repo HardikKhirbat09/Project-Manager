@@ -20,7 +20,7 @@ app.use(cookieParser());
 //cors configuration
 const corsOptions = {
     origin: function(origin, callback) {
-        const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+        const allowedOrigins = ['https://project-manager-lake-ten.vercel.app', 'http://127.0.0.1:3000'];
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
