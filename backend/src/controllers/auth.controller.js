@@ -214,21 +214,17 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const forgotPasswordReq = asyncHandler(async (req, res) => {
-    console.log("1. Forgot password request started");
 
     const { email } = req.body;
 
     const user = await User.findOne({ email });
-    console.log("2. User found");
 
     const { unhashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
-    console.log("3. Token generated");
 
     user.forgotPasswordToken = hashedToken;
     user.forgotPasswordTokenExpiry = tokenExpiry;
 
     await user.save({ validateBeforeSave: false });
-    console.log("4. User saved");
 
     await sendEmail({
         email: user.email,
@@ -238,8 +234,6 @@ const forgotPasswordReq = asyncHandler(async (req, res) => {
             `${process.env.RESET_PASSWORD_URL}/${unhashedToken}`
         ),
     });
-
-    console.log("5. Email function completed");
 
     return res.status(200).json(
         new apiResponse(200, null, "Password reset email sent successfully")
