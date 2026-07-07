@@ -6,7 +6,7 @@ const sendEmail = async (options) => {
         theme : 'default',
         product : {
             name : 'Project Manager',
-            link : 'https://projectmanager.com',
+            link : 'http://localhost:3000',
         }
     })
 
@@ -23,7 +23,7 @@ const sendEmail = async (options) => {
     })
 
     const mail = {
-        from : 'mail.projectmanager@example.com',
+        from : `"Project Manager" <${process.env.SMTP_USER}>`,
         to : options.email,
         subject : options.subject,
         text : emailTextual,
