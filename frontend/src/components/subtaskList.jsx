@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import taskService from '../api/taskService'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/authContext'
 
 export default function SubtaskList({ projectId, taskId, userRole, onSubtasksUpdated, assignedTo }) {
   const [subtasks, setSubtasks] = useState([])
