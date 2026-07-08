@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import taskService from '../api/taskService'
 
-export default function SubtaskList({ projectId, taskId, userRole, onSubtasksUpdated }) {
+export default function SubtaskList({ projectId, taskId, userRole, onSubtasksUpdated, assignedTo }) {
   const [subtasks, setSubtasks] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ title: '' })
   const [submitting, setSubmitting] = useState(false)
-
+  const canToggle = assignedTo === userId || userRole === 'admin';
   useEffect(() => {
     fetchSubtasks()
   }, [projectId, taskId])
@@ -106,6 +106,7 @@ export default function SubtaskList({ projectId, taskId, userRole, onSubtasksUpd
                 type="checkbox"
                 checked={subtask.isCompleted || false}
                 onChange={() => handleUpdateSubtask(subtask._id, subtask.isCompleted)}
+                disabled={!canToggle}
                 className="h-4 w-4"
               />
               <span className={subtask.isCompleted ? 'line-through text-gray-500' : 'text-gray-900'}>
