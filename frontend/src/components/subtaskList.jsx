@@ -7,7 +7,7 @@ export default function SubtaskList({ projectId, taskId, userRole, onSubtasksUpd
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ title: '' })
   const [submitting, setSubmitting] = useState(false)
-  const canToggle = assignedTo === userId || userRole === 'admin';
+  const canToggle = assignedTo === user._id || userRole === 'admin';
   useEffect(() => {
     fetchSubtasks()
   }, [projectId, taskId])
