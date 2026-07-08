@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://your-app-name.onrender.com/api/:path*" },
+    { "source": "/api/:path*", "destination": "https://project-manager-ak0z.onrender.com/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
