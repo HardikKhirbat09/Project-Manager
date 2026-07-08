@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import taskService from '../api/taskService'
+import { useAuth } from '../context/AuthContext'
 
 export default function SubtaskList({ projectId, taskId, userRole, onSubtasksUpdated, assignedTo }) {
   const [subtasks, setSubtasks] = useState([])
@@ -7,11 +8,11 @@ export default function SubtaskList({ projectId, taskId, userRole, onSubtasksUpd
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ title: '' })
   const [submitting, setSubmitting] = useState(false)
+  const { user } = useAuth()
   const canToggle = assignedTo === user._id || userRole === 'admin';
   useEffect(() => {
     fetchSubtasks()
   }, [projectId, taskId])
-
   const fetchSubtasks = async () => {
     try {
       const response = await taskService.getTaskById(projectId, taskId)
